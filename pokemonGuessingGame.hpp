@@ -34,9 +34,11 @@ class pokemonGuessingGame
 
     pokemon getRandomPokemon() const;
     hintGenerator getHintGenerator(pokemon& randomPokemonRef) const;
-
     uint64_t getMaxHints();
-    void generateHint(const uint64_t& randomIndex);
+
+    std::string getValidPokemonGuess();
+    bool playAgain(bool& hasDesiredSettings);
+    void removePokemon(const uint64_t& pokemonIndex);
     
     void debugTest(const uint64_t& index);
 
@@ -71,5 +73,5 @@ class pokemonGuessingGame
     void setDifficultyParameters(const std::string& desiredDifficulty);
     
     uint64_t maxHints;
-    std::vector<std::vector<std::string>> includedHints;
+    uint64_t getMaxHints() const;
 };

@@ -24,26 +24,20 @@ void pokemonGuessingGame::reset()
 
 bool pokemonGuessingGame::verifyUserInput()
 {
-    std::cout << "Is this correct? (Y / N)" << "\n>>> ";
+    std::cout << "(Y / N)" << "\n>>> ";
     std::string stringInput;
 
     getline(std::cin, stringInput);
     stringInput = toupper(stringInput[0]);
     
+    std::cout << "\n";
+
     if ("Y" == stringInput)
     {
-        std::cout << "\n";
         return true;
     }
-    else if ("N" == stringInput)
-    {
-        std::cout << "\n";
-        return false;
-    }
-    else
-    {
-        std::cout << "ERROR: pokemonGuessingGame::verifyUserInput()";
-    }
+    
+    return false;
 }
 
 void pokemonGuessingGame::getDesiredRegionsFromUser()
@@ -68,6 +62,8 @@ void pokemonGuessingGame::getDesiredRegionsFromUser()
 
     std::cout << "\nYOUR INCLUDED REGIONS\n";
     printStringVector(includedRegions);
+
+    std::cout << "Is this correct? ";
 }
 
 void pokemonGuessingGame::getValidRegionInput(bool& breakInputLoop)
@@ -124,7 +120,6 @@ std::string pokemonGuessingGame::getValidStringInput(const std::vector<std::stri
     }
 
     return stringInput;
-    
 }
 
 void pokemonGuessingGame::initializeIncludedPokemonIndices()
@@ -164,12 +159,20 @@ void pokemonGuessingGame::getDesiredDifficultyFromUser()
     std::cout
     << "Type in a difficulty level, then push enter\n"
     << "VALID DIFFICULTY INPUTS\n"
-    << "EASY || MODERATE || HARD || EXPERT";
+    << "EASY || MODERATE || HARD || EXPERT\n";
     
-    auto desiredDifficulty = getValidStringInput(validDifficultyLevels);
+    std::string desiredDifficulty;
+    desiredDifficulty = getValidStringInput(validDifficultyLevels);
+
+    while (desiredDifficulty.empty())
+    {
+        desiredDifficulty = getValidStringInput(validDifficultyLevels);
+    }
+
     setDifficultyParameters(desiredDifficulty);
 
     std::cout << "\nYOUR DESIRED DIFFICULTY LEVEL\n" << desiredDifficulty << "\n";
+    std::cout << "Is this correct? ";
 }
 
 void pokemonGuessingGame::setDifficultyParameters(const std::string& desiredDifficulty)
@@ -180,21 +183,21 @@ void pokemonGuessingGame::setDifficultyParameters(const std::string& desiredDiff
         {
             switch (i)
             {
-                case 0:
+                case EASY:
                     eDesiredDifficulty = EASY;
-                    maxHints = 20;
+                    maxHints = 5;
                     return;
-                case 1:
+                case MODERATE:
                     eDesiredDifficulty = MODERATE;
-                    maxHints = 12;
+                    maxHints = 5;
                     return;
-                case 2:
+                case HARD:
                     eDesiredDifficulty = HARD;
-                    maxHints = 8;
+                    maxHints = 5;
                     return;
-                case 3:
+                case EXPERT:
                     eDesiredDifficulty = EXPERT;
-                    maxHints = 3;
+                    maxHints = 5;
                     return;
                 default:
                     std::cout << "ERROR: pokemonGuessingGame::setDifficulty";
@@ -202,6 +205,11 @@ void pokemonGuessingGame::setDifficultyParameters(const std::string& desiredDiff
             }
         }
     }
+}
+
+uint64_t pokemonGuessingGame::getMaxHints() const
+{
+    return maxHints;
 }
 
 pokemon pokemonGuessingGame::getRandomPokemon() const
@@ -223,8 +231,106 @@ uint64_t pokemonGuessingGame::getMaxHints()
     return maxHints;
 }
 
-void pokemonGuessingGame::generateHint(const uint64_t& randomIndex)
+std::string pokemonGuessingGame::getValidPokemonGuess()
 {
+    uint64_t closestMatchIndex;
+    bool isValidVerified = false;
+
+    do
+    {
+        std::string pokemonGuess;
+
+        std::cout << ">>> ";
+        getline(std::cin, pokemonGuess);
+        formatPokemonNameString(pokemonGuess);
+
+        uint64_t mostMatchingChars = 0;
+
+        for (const auto pokemonIndex : includedPokemonIndices)
+        {
+            if (pokemonGuess == pokemonNamesVec[pokemonIndex])
+            {
+                return pokemonGuess;
+            }
+            else
+            {
+                const auto shorterStrLength = getShorterString(pokemonGuess, pokemonNamesVec[pokemonIndex]).length();
+                uint64_t i = 0;
+
+                while (pokemonNamesVec[pokemonIndex][i] == pokemonGuess[i] && i < shorterStrLength)
+                {
+                    i++;
+                }
+
+                if (i > mostMatchingChars)
+                {
+                    mostMatchingChars = i;
+                    closestMatchIndex = pokemonIndex;
+                }
+            }
+        }
+
+        if (closestMatchIndex == (28 || 31))
+        {
+            std::cout << "Did you mean Nidoran? ";
+            
+            if (verifyUserInput())
+            {
+                std::cout << "Please input F for " << pokemonNamesVec[28] << "or M for" << pokemonNamesVec[31];
+
+                std::string userInStr;
+                getline(std::cin, userInStr);
+                toupper(userInStr[0]);
+
+                if (userInStr[0] == 'F')
+                {
+                    return pokemonNamesVec[28];
+                }
+                else if (userInStr[0] == 'M')
+                {
+                    return pokemonNamesVec[31];
+                }
+            } 
+        }
+        else
+        {
+            std::cout << "Did you mean " << pokemonNamesVec[closestMatchIndex] << " ? ";
+            isValidVerified = verifyUserInput();
+        }
+    }
+        while (!isValidVerified);
+
+    return pokemonNamesVec[closestMatchIndex];
+}
+
+bool pokemonGuessingGame::playAgain(bool& hasDesiredSettings)
+{
+    std::cout << "Would you like to play again?\n";
+    if (verifyUserInput())
+    {
+        std::cout << "Would you like to apply new game settings?\n";
+        hasDesiredSettings = !verifyUserInput();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+    return false;
+}
+
+void pokemonGuessingGame::removePokemon(const uint64_t& pokemonIndex)
+{
+    for (const auto i : includedPokemonIndices)
+    {
+        if (pokemonIndex == i)
+        {
+            includedPokemonIndices.erase(includedPokemonIndices.begin() + i);
+            totalIncludedPokemon--;
+            return;
+        }
+    }  
 }
 
 void pokemonGuessingGame::debugTest(const uint64_t& index)

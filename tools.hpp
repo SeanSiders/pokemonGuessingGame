@@ -27,6 +27,24 @@ void stringToAllCaps(std::string& str)
     }
 }
 
+void formatPokemonNameString(std::string& str)
+{
+    str[0] = toupper(str[0]);
+    
+    for (uint64_t i = 1; i < str.length(); i++)
+    {
+        if (isalpha(str[i]))
+        {
+            str[i] = tolower(str[i]);
+        }
+        else if (' ' == str[i])
+        {
+            i++;
+            str[i] = toupper(str[i]);
+        }
+    }
+}
+
 bool isValidStringInput(const std::string& stringInput, const std::vector<std::string>& validInputs)
 {
     for (uint64_t i = 0; i < validInputs.size(); i++)
@@ -38,6 +56,16 @@ bool isValidStringInput(const std::string& stringInput, const std::vector<std::s
     }
 
     return false;
+}
+
+std::string getShorterString(const std::string& str1, const std::string& str2)
+{
+    if (str1.length() > str2.length())
+    {
+        return str1;
+    }
+
+    return str2;
 }
 
 void popStringFromVector(std::vector<std::string>& vec, std::string& stringToPop)

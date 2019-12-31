@@ -2810,6 +2810,7 @@ std::map<unsigned short, evolutionTypes> canEvolveByMap
     {115, LEVEL},
     {116, TRADE_ITEM},
     {117, LEVEL},
+    {119, LEVEL},
     {122, TRADE_ITEM},
     {124, TRADE_ITEM},
     {125, TRADE_ITEM},

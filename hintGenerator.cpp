@@ -7,7 +7,7 @@ hintGenerator::hintGenerator(const pokemon& randomPokemon, const std::vector<std
     levelTwoHints.clear();
     levelThreeHints.clear();
     typeAbundance = 0;
-    hintBuffer = "";
+    hintBuffer.clear();
 
     randomPokemonPtr = &randomPokemon;
     includedRegionsPtr = &includedRegions;
@@ -283,6 +283,29 @@ void hintGenerator::initializeHints()
             levelTwoHints.push_back(hintBuffer);
         }
     }
+
+    /*CHAR HINTS*/
+    /*
+    const auto firstChar = randomPokemonPtr->name[0];
+    hintBuffer = "The first letter of this Pokemon's name is: " + firstChar;
+
+    if (firstChar == ('Q' || 'U' || 'X' || 'Y' || 'Z'))
+    {
+        levelOneHints.push_back(hintBuffer);
+    }
+    else if (firstChar == ('I' || 'J' || 'O' || 'V' || 'W'))
+    {
+        levelTwoHints.push_back(hintBuffer);
+    }
+    else
+    {
+        levelThreeHints.push_back(hintBuffer);
+    }
+
+    const auto lastCharIndex = randomPokemonPtr->name.length() - 1;
+    hintBuffer = "The last letter of this Pokemon's name is: " + randomPokemonPtr->name[lastCharIndex];
+    levelOneHints.push_back(hintBuffer);
+    */
 }
 
 std::string hintGenerator::getTypeString(const pokemonTypes& ePokemonType) const
@@ -422,11 +445,43 @@ std::string hintGenerator::getMonoGenderString(const gender& eGender) const
     }
 }
 
+void hintGenerator::generateHint(const _Float64& ratio)
+{
+    uint64_t randomIndex;
+    uint64_t hintVecSize;
+
+    if (ratio <= .5)
+    {
+        hintVecSize = levelThreeHints.size();
+        randomIndex = generateRandomNumber(0, hintVecSize - 1);
+
+        std::cout << levelThreeHints[randomIndex];
+        levelThreeHints.erase(levelThreeHints.begin() + randomIndex);
+    }
+    else if (ratio <= .75)
+    {
+        hintVecSize = levelTwoHints.size();
+        randomIndex = generateRandomNumber(0, hintVecSize - 1);
+
+        std::cout << levelTwoHints[randomIndex];
+        levelTwoHints.erase(levelTwoHints.begin() + randomIndex);
+    }
+    else
+    {
+        hintVecSize = levelOneHints.size();
+        randomIndex = generateRandomNumber(0, hintVecSize - 1);
+
+        std::cout << levelOneHints[randomIndex];
+        levelOneHints.erase(levelOneHints.begin() + randomIndex);
+    }
+
+    std::cout << "\n";
+}
+
 void hintGenerator::debugTest()
 {
-    std::cout << randomPokemonPtr->nationalPokedexNumber << ". " << randomPokemonPtr->name << " | " << getTypeString(randomPokemonPtr->typing->type) << " / " << getTypeString(randomPokemonPtr->typing->subType) << "\n";
-
-    //printAllHints();
+    std::cout << randomPokemonPtr->nationalPokedexNumber << ". " << randomPokemonPtr->name << "\n";
+    printAllHints();
 }
 
 void hintGenerator::printAllHints()

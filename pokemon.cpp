@@ -43,6 +43,8 @@ regions pokemon::getRegionOrigin(const std::vector<indexRange>& indexRangeRefere
         }
         i++;
     }
+    
+    return KANTO;
 }
 
 void pokemon::initializeParams()

@@ -7,6 +7,7 @@ class hintGenerator
 {
     public:
     hintGenerator(const pokemon& randomPokemon, const std::vector<std::string>& includedRegions, const std::vector<std::string>& regionReference, const eDifficulty& difficultySetting);
+    void generateHint(const _Float64& ratio);
 
     private:
     const pokemon* randomPokemonPtr;
@@ -30,6 +31,7 @@ class hintGenerator
 
     std::string hintBuffer;
     std::string variableStringBuffer;
+
     std::vector<std::string> levelOneHints;
     std::vector<std::string> levelTwoHints;
     std::vector<std::string> levelThreeHints;
