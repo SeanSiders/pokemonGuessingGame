@@ -16,6 +16,10 @@ class pokemon
     evolutionStages evolutionStage;
     gender possibleGender;
     evolutionTypes evolutionType;
+    std::string pokedexCategory;
+    colors bodyColor;
+    heightWeightData heightWeight;
+    pokedexEntryFormat pokedexEntry;
 
     bool isMonoType;
     bool isLegendary;

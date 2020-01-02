@@ -3,9 +3,8 @@
 
 hintGenerator::hintGenerator(const pokemon& randomPokemon, const std::vector<std::string>& includedRegions, const std::vector<std::string>& regionReference, const eDifficulty& difficultySetting)
 {
-    levelOneHints.clear();
-    levelTwoHints.clear();
-    levelThreeHints.clear();
+    biggerHints.clear();
+    smallerHints.clear();
     typeAbundance = 0;
     hintBuffer.clear();
 
@@ -74,31 +73,27 @@ void hintGenerator::initializeHints()
     if (VARIABLE_FORM == randomPokemonPtr->typing->type)
     {
         hintBuffer = "This Pokemon's primary type varies, depending on it's form";
-        levelOneHints.push_back(hintBuffer);
+        biggerHints.push_back(hintBuffer);
 
         variableStringBuffer = getTypeString(randomPokemonPtr->typing->subType);
         hintBuffer = "This Pokemon's sub type is " + variableStringBuffer;
-        levelOneHints.push_back(hintBuffer);
+        biggerHints.push_back(hintBuffer);
     }
     else if (VARIABLE_FORM == randomPokemonPtr->typing->subType)
     {
         hintBuffer = "This Pokemon's sub type varies, depending on it's form";
-        levelOneHints.push_back(hintBuffer);
+        biggerHints.push_back(hintBuffer);
 
         variableStringBuffer = getTypeString(randomPokemonPtr->typing->type);
         hintBuffer = "This Pokemon's primary type is " + variableStringBuffer;
 
         if (typeAbundance > 20)
         {
-            levelThreeHints.push_back(hintBuffer);
-        }
-        else if (typeAbundance > 5)
-        {
-            levelTwoHints.push_back(hintBuffer);
+            smallerHints.push_back(hintBuffer);
         }
         else
         {
-            levelOneHints.push_back(hintBuffer);
+            biggerHints.push_back(hintBuffer);
         }
     }
     else
@@ -112,7 +107,7 @@ void hintGenerator::initializeHints()
             else
             {
                 hintBuffer = "This Pokemon is mono type";
-                levelTwoHints.push_back(hintBuffer);
+                smallerHints.push_back(hintBuffer);
 
                 variableStringBuffer = getTypeString(randomPokemonPtr->typing->type);
             }
@@ -130,7 +125,7 @@ void hintGenerator::initializeHints()
             {
                 variableStringBuffer = getTypeString(randomPokemonPtr->typing->subType);
                 hintBuffer = "This Pokemon's sub type is " + variableStringBuffer;
-                levelOneHints.push_back(hintBuffer);
+                biggerHints.push_back(hintBuffer);
 
                 variableStringBuffer = getTypeString(randomPokemonPtr->typing->type);
                 hintBuffer = "This Pokemon's primary type is " + variableStringBuffer;
@@ -139,15 +134,11 @@ void hintGenerator::initializeHints()
 
         if (typeAbundance > 20)
         {
-            levelThreeHints.push_back(hintBuffer);
-        }
-        else if (typeAbundance > 5)
-        {
-            levelTwoHints.push_back(hintBuffer);
+            smallerHints.push_back(hintBuffer);
         }
         else
         {
-            levelOneHints.push_back(hintBuffer);
+            biggerHints.push_back(hintBuffer);
         }
     }
 
@@ -165,86 +156,76 @@ void hintGenerator::initializeHints()
         
         if (EASY == *difficultySettingPtr)
         {
-            levelTwoHints.push_back(hintBuffer);
+            smallerHints.push_back(hintBuffer);
         }
         else
         {
-            levelOneHints.push_back(hintBuffer);
+            biggerHints.push_back(hintBuffer);
         } 
-    }
-    else
-    {
-        hintBuffer = "This Pokemon is not a Legendary Pokemon";
-        levelThreeHints.push_back(hintBuffer);
     }
 
     /*EVOLUTION HINTS*/
     if (randomPokemonPtr->isStarter)
     {
         hintBuffer = "This Pokemon is a starter Pokemon";
-        levelOneHints.push_back(hintBuffer);
+        biggerHints.push_back(hintBuffer);
+    }
+ 
+    if (UNEVOLVED == randomPokemonPtr->evolutionStage)
+    {
+        hintBuffer = "This pokemon is an unevolved form";
     }
     else
     {
-        hintBuffer = "This Pokemon is not a starter Pokemon";
-        levelThreeHints.push_back(hintBuffer);
+        variableStringBuffer = getEvolutionStageString(randomPokemonPtr->evolutionStage);
+        hintBuffer = "This Pokemon is a " + variableStringBuffer + " stage evolution";
+    }
 
-        if (UNEVOLVED == randomPokemonPtr->evolutionStage)
-        {
-            hintBuffer = "This pokemon is an unevolved form";
-        }
-        else
-        {
-            variableStringBuffer = getEvolutionStageString(randomPokemonPtr->evolutionStage);
-            hintBuffer = "This Pokemon is a " + variableStringBuffer + " stage evolution";
-        }
+    if (SECOND == randomPokemonPtr->evolutionStage)
+    {
+        smallerHints.push_back(hintBuffer);
+    }
+    else
+    {
+        smallerHints.push_back(hintBuffer);
 
-        if (SECOND == randomPokemonPtr->evolutionStage)
+        if (randomPokemonPtr->canEvolve)
         {
-            levelTwoHints.push_back(hintBuffer);
-        }
-        else
-        {
-            levelThreeHints.push_back(hintBuffer);
+            hintBuffer = "This Pokemon can evolve";
+            variableStringBuffer = getEvolutionTypeString(randomPokemonPtr->evolutionType);
 
-            if (randomPokemonPtr->canEvolve)
+            if (EASY == *difficultySettingPtr)
             {
-                hintBuffer = "This Pokemon can evolve";
-                variableStringBuffer = getEvolutionTypeString(randomPokemonPtr->evolutionType);
-
-                if (EASY == *difficultySettingPtr)
+                hintBuffer += " " + variableStringBuffer;
+                if (LEVEL == randomPokemonPtr->evolutionType)
                 {
-                    hintBuffer += " " + variableStringBuffer;
-                    if (LEVEL == randomPokemonPtr->evolutionType)
-                    {
-                        levelThreeHints.push_back(hintBuffer);
-                    }
-                    else
-                    {
-                        levelTwoHints.push_back(hintBuffer);
-                    }
+                    smallerHints.push_back(hintBuffer);
                 }
                 else
                 {
-                    levelThreeHints.push_back(hintBuffer);
-
-                    hintBuffer += " " + variableStringBuffer;
-                    levelOneHints.push_back(hintBuffer);
-                }     
+                    biggerHints.push_back(hintBuffer);
+                }
             }
             else
             {
-                hintBuffer = "This Pokemon cannot evolve";
-                if (EASY == *difficultySettingPtr)
-                {
-                    levelTwoHints.push_back(hintBuffer);
-                }
-                else
-                {
-                    levelOneHints.push_back(hintBuffer);
-                }
-            }    
+                smallerHints.push_back(hintBuffer);
+
+                hintBuffer += " " + variableStringBuffer;
+                biggerHints.push_back(hintBuffer);
+            }     
         }
+        else
+        {
+            hintBuffer = "This Pokemon cannot evolve";
+            if (EASY == *difficultySettingPtr)
+            {
+                smallerHints.push_back(hintBuffer);
+            }
+            else
+            {
+                biggerHints.push_back(hintBuffer);
+            }
+        }    
     }
 
     /*REGION ORIGIN HINTS*/
@@ -255,11 +236,11 @@ void hintGenerator::initializeHints()
 
         if (EASY == *difficultySettingPtr)
         {
-            levelTwoHints.push_back(hintBuffer);
+            smallerHints.push_back(hintBuffer);
         }
         else
         {
-            levelOneHints.push_back(hintBuffer);
+            biggerHints.push_back(hintBuffer);
         }
     }
 
@@ -267,7 +248,7 @@ void hintGenerator::initializeHints()
     if (randomPokemonPtr->isGenderless)
     {
         hintBuffer = "This Pokemon is genderless";
-        levelOneHints.push_back(hintBuffer);
+        biggerHints.push_back(hintBuffer);
     }
     else if (randomPokemonPtr->isMonoGender)
     {
@@ -275,37 +256,69 @@ void hintGenerator::initializeHints()
         {
             variableStringBuffer = getMonoGenderString(randomPokemonPtr->possibleGender);
             hintBuffer = "This Pokemon can only be " + variableStringBuffer;
-            levelOneHints.push_back(hintBuffer);
+            biggerHints.push_back(hintBuffer);
         }
         else
         {
             hintBuffer = "This Pokemon can only be one gender";
-            levelTwoHints.push_back(hintBuffer);
+            smallerHints.push_back(hintBuffer);
         }
     }
 
     /*CHAR HINTS*/
-    /*
     const auto firstChar = randomPokemonPtr->name[0];
-    hintBuffer = "The first letter of this Pokemon's name is: " + firstChar;
+    hintBuffer = "The first letter of this Pokemon's name is: ";
+    hintBuffer += firstChar;
 
-    if (firstChar == ('Q' || 'U' || 'X' || 'Y' || 'Z'))
+    biggerHints.push_back(hintBuffer);
+
+    const auto lastChar = randomPokemonPtr->name[randomPokemonPtr->name.length() - 1];
+    hintBuffer = "The last letter of this Pokemon's name is: ";
+    hintBuffer += lastChar;
+    biggerHints.push_back(hintBuffer);
+    
+    /*POKEDEX HINTS*/
+    variableStringBuffer = randomPokemonPtr->pokedexCategory;
+    hintBuffer = "The Pokedex refers to this Pokemon as the " + variableStringBuffer + " Pokemon";
+    biggerHints.push_back(hintBuffer);
+
+    hintBuffer = "This Pokemon's national pokedex number is #";
+    hintBuffer += std::to_string(randomPokemonPtr->nationalPokedexNumber);
+    biggerHints.push_back(hintBuffer);
+
+    hintBuffer = randomPokemonPtr->pokedexEntry.first;
+    biggerHints.push_back(hintBuffer);
+
+    hintBuffer = randomPokemonPtr->pokedexEntry.second;
+    biggerHints.push_back(hintBuffer);
+
+    /*COLOR HINTS*/
+    variableStringBuffer = getBodyColorString(randomPokemonPtr->bodyColor);
+    hintBuffer = "This Pokemon's primary body color is " + variableStringBuffer;
+    biggerHints.push_back(hintBuffer);
+
+    /*HEIGHT WEIGHT HINTS*/
+    variableStringBuffer = std::to_string(randomPokemonPtr->heightWeight.feet) + "'" + std::to_string(randomPokemonPtr->heightWeight.inches) + "\"";
+    hintBuffer = "This Pokemon is " + variableStringBuffer + " in height";
+    if (randomPokemonPtr->heightWeight.feet > 10 || randomPokemonPtr->heightWeight.feet < 1)
     {
-        levelOneHints.push_back(hintBuffer);
-    }
-    else if (firstChar == ('I' || 'J' || 'O' || 'V' || 'W'))
-    {
-        levelTwoHints.push_back(hintBuffer);
+        smallerHints.push_back(hintBuffer);
     }
     else
     {
-        levelThreeHints.push_back(hintBuffer);
+        biggerHints.push_back(hintBuffer);
     }
 
-    const auto lastCharIndex = randomPokemonPtr->name.length() - 1;
-    hintBuffer = "The last letter of this Pokemon's name is: " + randomPokemonPtr->name[lastCharIndex];
-    levelOneHints.push_back(hintBuffer);
-    */
+    variableStringBuffer = std::to_string(randomPokemonPtr->heightWeight.weight);
+    hintBuffer = "This Pokemon weighs on average " + variableStringBuffer + " lbs";
+    if (randomPokemonPtr->heightWeight.weight > 100.0 || randomPokemonPtr->heightWeight.weight < 5.0)
+    {
+        smallerHints.push_back(hintBuffer);
+    }
+    else
+    {
+        biggerHints.push_back(hintBuffer);
+    }
 }
 
 std::string hintGenerator::getTypeString(const pokemonTypes& ePokemonType) const
@@ -445,34 +458,49 @@ std::string hintGenerator::getMonoGenderString(const gender& eGender) const
     }
 }
 
-void hintGenerator::generateHint(const _Float64& ratio)
+std::string hintGenerator::getBodyColorString(const colors& eBodyColor) const
+{
+    switch (eBodyColor)
+    {
+        case RED: return "red";
+        case ORANGE: return "orange";
+        case BLUE: return "blue";
+        case YELLOW: return "yellow";
+        case GREEN: return "green";
+        case BLACK: return "black";
+        case BROWN: return "brown";
+        case TAN: return "tan";
+        case PURPLE: return "purple";
+        case GRAY: return "gray";
+        case SILVER: return "silver";
+        case WHITE: return "white";
+        case PINK: return "pink";
+        default:
+            std::cout << "ERROR: hintGenerator::getBodyColorString";
+            return "";
+    }
+}
+
+void hintGenerator::generateHint(const float& ratio)
 {
     uint64_t randomIndex;
     uint64_t hintVecSize;
 
-    if (ratio <= .5)
+    if (ratio <= .75 && !smallerHints.empty())
     {
-        hintVecSize = levelThreeHints.size();
+        hintVecSize = smallerHints.size();
         randomIndex = generateRandomNumber(0, hintVecSize - 1);
 
-        std::cout << levelThreeHints[randomIndex];
-        levelThreeHints.erase(levelThreeHints.begin() + randomIndex);
-    }
-    else if (ratio <= .75)
-    {
-        hintVecSize = levelTwoHints.size();
-        randomIndex = generateRandomNumber(0, hintVecSize - 1);
-
-        std::cout << levelTwoHints[randomIndex];
-        levelTwoHints.erase(levelTwoHints.begin() + randomIndex);
+        std::cout << smallerHints[randomIndex];
+        smallerHints.erase(smallerHints.begin() + randomIndex);
     }
     else
     {
-        hintVecSize = levelOneHints.size();
+        hintVecSize = biggerHints.size();
         randomIndex = generateRandomNumber(0, hintVecSize - 1);
 
-        std::cout << levelOneHints[randomIndex];
-        levelOneHints.erase(levelOneHints.begin() + randomIndex);
+        std::cout << biggerHints[randomIndex];
+        biggerHints.erase(biggerHints.begin() + randomIndex);
     }
 
     std::cout << "\n";
@@ -486,20 +514,14 @@ void hintGenerator::debugTest()
 
 void hintGenerator::printAllHints()
 {
-    std::cout << "LEVEL 3\n";
-    for (const auto str : levelThreeHints)
-    {
-        std::cout << str << "\n";
-    }
-
     std::cout << "LEVEL 2\n";
-    for (const auto str : levelTwoHints)
+    for (const auto str : smallerHints)
     {
         std::cout << str << "\n";
     }
 
     std::cout << "LEVEL 1\n";
-    for (const auto str : levelOneHints)
+    for (const auto str : biggerHints)
     {
         std::cout << str << "\n";
     }

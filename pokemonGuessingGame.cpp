@@ -185,15 +185,15 @@ void pokemonGuessingGame::setDifficultyParameters(const std::string& desiredDiff
             {
                 case EASY:
                     eDesiredDifficulty = EASY;
-                    maxHints = 5;
+                    maxHints = 12;
                     return;
                 case MODERATE:
                     eDesiredDifficulty = MODERATE;
-                    maxHints = 5;
+                    maxHints = 10;
                     return;
                 case HARD:
                     eDesiredDifficulty = HARD;
-                    maxHints = 5;
+                    maxHints = 8;
                     return;
                 case EXPERT:
                     eDesiredDifficulty = EXPERT;

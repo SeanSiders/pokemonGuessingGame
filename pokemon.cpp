@@ -9,6 +9,10 @@ pokemon::pokemon(uint64_t index, const std::vector<std::string>& includedRegions
     typing = &pokemonTypingVec[pokemonIndex];
     regionOrigin = getRegionOrigin(indexRangeReference);
     evolutionStage = evolutionStageVec[pokemonIndex];
+    pokedexCategory = pokedexCategoryVec[pokemonIndex];
+    bodyColor = bodyColorVec[pokemonIndex];
+    heightWeight = heightWeightVec[pokemonIndex];
+    pokedexEntry = pokedexEntriesVec[pokemonIndex];
 
     initializeParams();
 }
