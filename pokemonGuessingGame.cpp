@@ -226,11 +226,6 @@ hintGenerator pokemonGuessingGame::getHintGenerator(pokemon& randomPokemonRef) c
     return hintGeneratorInstance;
 }
 
-uint64_t pokemonGuessingGame::getMaxHints()
-{
-    return maxHints;
-}
-
 std::string pokemonGuessingGame::getValidPokemonGuess()
 {
     uint64_t closestMatchIndex;

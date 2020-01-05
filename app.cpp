@@ -19,7 +19,7 @@ int main()
     
         do { game.getDesiredDifficultyFromUser(); }
             while ( !game.verifyUserInput() );
-
+        /*
         std::string str;
 
         for (uint64_t i = 0; i < 807; i++)
@@ -29,7 +29,7 @@ int main()
         }
 
         return 0;
-
+        */
         bool userHasDesiredSettings = true;
 
         do
@@ -46,7 +46,8 @@ int main()
             do
             {
                 std::cout << currentHint << "/" << maxHints << " ";
-                hintGeneratorInstance.generateHint(currentHint / maxHints);
+                _Float64 hintRatio = (_Float64)currentHint / (_Float64)maxHints;
+                hintGeneratorInstance.generateHint(hintRatio);
                 std::cout << "\n";
 
                 userGuess = game.getValidPokemonGuess();
@@ -63,8 +64,7 @@ int main()
                 else
                 {
                     currentHint++;
-                } 
-                
+                }
             }
                 while (gameIsLooping);
 

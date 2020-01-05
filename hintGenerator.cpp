@@ -1,5 +1,6 @@
 #include "hintGenerator.hpp"
 #include "specialEvolutionDescriptions.hpp"
+#include "tools.hpp"
 
 hintGenerator::hintGenerator(const pokemon& randomPokemon, const std::vector<std::string>& includedRegions, const std::vector<std::string>& regionReference, const eDifficulty& difficultySetting)
 {
@@ -16,7 +17,7 @@ hintGenerator::hintGenerator(const pokemon& randomPokemon, const std::vector<std
     typeAbundance = initializeAbundanceOfRandomPokemonType(randomPokemonPtr->typing->type);
 
     initializeHints();
-    debugTest();
+    //debugTest();
 }
 
 unsigned short hintGenerator::initializeAbundanceOfRandomPokemonType(const pokemonTypes& ePokemonType) const
@@ -481,26 +482,42 @@ std::string hintGenerator::getBodyColorString(const colors& eBodyColor) const
     }
 }
 
-void hintGenerator::generateHint(const float& ratio)
+void hintGenerator::generateHint(const _Float64& ratio)
 {
     uint64_t randomIndex;
     uint64_t hintVecSize;
 
-    if (ratio <= .75 && !smallerHints.empty())
+    if (ratio <= .5 && !smallerHints.empty())
     {
         hintVecSize = smallerHints.size();
-        randomIndex = generateRandomNumber(0, hintVecSize - 1);
 
-        std::cout << smallerHints[randomIndex];
-        smallerHints.erase(smallerHints.begin() + randomIndex);
+        if (hintVecSize == 1)
+        {
+            std::cout << smallerHints[0];
+            smallerHints.erase(smallerHints.begin());
+        }
+        else
+        {
+            randomIndex = generateRandomNumber(0, hintVecSize - 1);
+            std::cout << smallerHints[randomIndex];
+            smallerHints.erase(smallerHints.begin() + randomIndex);
+        }
     }
     else
     {
         hintVecSize = biggerHints.size();
-        randomIndex = generateRandomNumber(0, hintVecSize - 1);
 
-        std::cout << biggerHints[randomIndex];
-        biggerHints.erase(biggerHints.begin() + randomIndex);
+        if (hintVecSize == 1)
+        {
+            std::cout << biggerHints[0];
+            biggerHints.erase(smallerHints.begin());
+        }
+        else
+        {
+            randomIndex = generateRandomNumber(0, hintVecSize - 1);
+            std::cout << biggerHints[randomIndex];
+            biggerHints.erase(biggerHints.begin() + randomIndex);
+        }
     }
 
     std::cout << "\n";
